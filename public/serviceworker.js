@@ -31,4 +31,22 @@ self.addEventListener("fetch", (e) => {
 });
 
 // Activate the SW
-self.addEventListener("activate", (e) => {});
+self.addEventListener("activate", (e) => {
+  const cacheWhitelist = [];
+  cacheWhitelist.push(CACHE_NAME);
+
+  const cached = async () => {
+    const cacheNames = await caches.keys();
+    if (cacheNames) {
+      Promise.all(
+        cacheNames.map((cacheName) => {
+          if (!cacheWhitelist.includes(cacheName)) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }
+  };
+
+  e.waitUntil(cached());
+});
