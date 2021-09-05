@@ -22,7 +22,13 @@ self.addEventListener("install", (e) => {
 });
 
 // Listen for requests
-self.addEventListener("fetch", (e) => {});
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then(() => {
+      return fetch(e.request).catch(() => caches.match("offline.html"));
+    })
+  );
+});
 
 // Activate the SW
 self.addEventListener("activate", (e) => {});
